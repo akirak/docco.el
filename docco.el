@@ -44,7 +44,7 @@
        :before "function"
        :line-comment "///")
       (module
-       "module-comment"
+       "module_comment"
        :before "source_file"
        :line-comment "////"))))
   ""
