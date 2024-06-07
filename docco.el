@@ -63,7 +63,7 @@
           (guard treesit)
           (let `(,_ ,comment-node-type . ,plist) (assq type treesit-patterns)))
      (require 'treesit)
-     (apply #'docco--ts-find comment-node-type plist))))
+     (apply #'docco-ts--edit comment-node-type plist))))
 
 ;;;; Commands
 

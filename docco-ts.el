@@ -32,15 +32,15 @@
 
 (require 'treesit)
 
-(cl-defun docco--ts-find (comment-node-type &key before line-comment)
-  (let ((node (docco--ts-find-ancestor-or-self (list comment-node-type before))))
+(cl-defun docco-ts--edit (comment-node-type &key before line-comment)
+  (let ((node (docco-ts--find-ancestor-or-self (list comment-node-type before))))
     ;; Find a location that begins a comment or is suitable for inserting a
     ;; comment
     (cond
      ((equal (treesit-node-type node) comment-node-type)
       (goto-char (treesit-node-start node)))
      ((equal (treesit-node-type node) before)
-      (if-let (comment-node (docco--ts-find-previous-sibling node comment-node-type before))
+      (if-let (comment-node (docco-ts--find-previous-sibling node comment-node-type before))
           (goto-char (treesit-node-start comment-node))
         (goto-char (treesit-node-start node))))
      (t
@@ -53,7 +53,7 @@
       (open-line 1)
       (insert line-comment " ")))))
 
-(defun docco--ts-find-ancestor-or-self (node-types)
+(defun docco-ts--find-ancestor-or-self (node-types)
   (let ((node (treesit-node-at (point))))
     (catch 'find-ts-node
       (while node
@@ -61,7 +61,7 @@
           (throw 'find-ts-node node))
         (setq node (treesit-node-parent node))))))
 
-(defun docco--ts-find-previous-sibling (start goal-type not-type)
+(defun docco-ts--find-previous-sibling (start goal-type not-type)
   (let ((node start))
     (catch 'find-prev-sibling
       (while node
