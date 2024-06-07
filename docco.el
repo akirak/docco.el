@@ -65,7 +65,7 @@
      (require 'treesit)
      (apply #'docco--ts-find comment-node-type plist))))
 
-;;;;; Tree-sitter infrastructure
+;;;; Commands
 
 ;;;###autoload
 (defun docco-edit-module-comment ()
