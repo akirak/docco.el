@@ -33,25 +33,33 @@
 (require 'treesit)
 
 (cl-defun docco-ts--edit (comment-node-type &key before line-comment)
+  (pcase (docco-ts--locate comment-node-type :before before)
+    (`nil
+     (user-error "not effective from this location"))
+    (`(,_exists . ,node)
+     (goto-char (treesit-node-start node))
+     ;; Enter a comment body
+     (cond
+      ((looking-at (concat (regexp-quote line-comment) (rx (* blank))))
+       (goto-char (match-end 0)))
+      (t
+       (open-line 1)
+       (insert line-comment " "))))))
+
+(cl-defun docco-ts--locate (comment-node-type &key before &allow-other-keys)
+  "Returns (EXISTING . NODE) to indicate what to do next."
   (let ((node (docco-ts--find-ancestor-or-self (list comment-node-type before))))
     ;; Find a location that begins a comment or is suitable for inserting a
     ;; comment
     (cond
      ((equal (treesit-node-type node) comment-node-type)
-      (goto-char (treesit-node-start node)))
+      (cons t node))
      ((equal (treesit-node-type node) before)
       (if-let (comment-node (docco-ts--find-previous-sibling node comment-node-type before))
-          (goto-char (treesit-node-start comment-node))
-        (goto-char (treesit-node-start node))))
+          (cons t comment-node)
+        (cons nil node)))
      (t
-      (user-error "not effective from this location")))
-    ;; Enter a comment body
-    (cond
-     ((looking-at (concat (regexp-quote line-comment) (rx (* blank))))
-      (goto-char (match-end 0)))
-     (t
-      (open-line 1)
-      (insert line-comment " ")))))
+      nil))))
 
 (defun docco-ts--find-ancestor-or-self (node-types)
   (let ((node (treesit-node-at (point))))

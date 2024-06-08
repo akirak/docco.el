@@ -57,13 +57,31 @@
   (when-let (mode (apply #'derived-mode-p (mapcar #'car docco-mode-alist)))
     (cdr (assq mode docco-mode-alist))))
 
-(defun docco--edit-comment (type)
+(defun docco--get-mode-settings (type)
   (pcase-exhaustive (docco--current-settings)
     ((and (map :treesit :treesit-patterns)
           (guard treesit)
           (let `(,_ ,comment-node-type . ,plist) (assq type treesit-patterns)))
-     (require 'treesit)
+     (cons 'treesit (cons comment-node-type plist)))))
+
+(cl-defun docco--edit-comment (type)
+  (pcase-exhaustive (docco--get-mode-settings type)
+    (`(treesit ,comment-node-type . ,plist)
      (apply #'docco-ts--edit comment-node-type plist))))
+
+(cl-defun docco--has-comment-p (type)
+  (pcase-exhaustive (docco--get-mode-settings type)
+    (`(treesit ,comment-node-type . ,plist)
+     (car (apply #'docco-ts--locate comment-node-type plist)))))
+
+(defun docco--statuses ()
+  (pcase (docco--current-settings)
+    ((and (map :treesit :treesit-patterns)
+          (guard treesit))
+     (mapcar (pcase-lambda (`(,type ,comment-node-type . ,plist))
+               (cons type
+                     (car (apply #'docco-ts--locate comment-node-type plist))))
+             treesit-patterns))))
 
 ;;;; Commands
 
@@ -78,6 +96,25 @@
   "Insert a documentation comment for the function at point."
   (interactive)
   (docco--edit-comment 'function))
+
+;;;; Functions (public API)
+
+(defun docco-supported-p ()
+  "Return non-nil if the current major mode is supported by Docco."
+  (and (docco--current-settings)
+       t))
+
+(defun docco-has-module-comment-p ()
+  "Return non-nil if the module has a documentation comment on it."
+  (docco--has-comment-p 'function))
+
+(defun docco-has-function-comment-p ()
+  "Return non-nil if the function has a documentation comment on it."
+  (docco--has-comment-p 'function))
+
+(defun docco-comment-statuses ()
+  "Return the statuses of comments."
+  (docco--statuses))
 
 (provide 'docco)
 ;;; docco.el ends here
