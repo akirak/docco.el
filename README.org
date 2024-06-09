@@ -8,3 +8,5 @@ It relies on the built-in tree-sitter support of Emacs to define structural patt
 ** Usage
 - ~docco-edit-module-comment~ for editing a documentation comment of the current module
 - ~docco-edit-function-comment~ for editing a documentation comment of the function at point
+** See Also
+- [[https://github.com/akirak/cosmetic-transient.el][cosmetic-transient]] is a frontend that supports this project.
