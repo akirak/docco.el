@@ -62,6 +62,7 @@
     ((and (map :treesit :treesit-patterns)
           (guard treesit)
           (let `(,_ ,comment-node-type . ,plist) (assq type treesit-patterns)))
+     (require 'docco-ts)
      (cons 'treesit (cons comment-node-type plist)))))
 
 (cl-defun docco--edit-comment (type)
@@ -78,6 +79,7 @@
   (pcase (docco--current-settings)
     ((and (map :treesit :treesit-patterns)
           (guard treesit))
+     (require 'docco-ts)
      (mapcar (pcase-lambda (`(,type ,comment-node-type . ,plist))
                (cons type
                      (car (apply #'docco-ts--locate comment-node-type plist))))
