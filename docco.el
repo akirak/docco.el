@@ -108,7 +108,7 @@
 
 (defun docco-has-module-comment-p ()
   "Return non-nil if the module has a documentation comment on it."
-  (docco--has-comment-p 'function))
+  (docco--has-comment-p 'module))
 
 (defun docco-has-function-comment-p ()
   "Return non-nil if the function has a documentation comment on it."
