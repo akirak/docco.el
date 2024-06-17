@@ -41,7 +41,7 @@
      :treesit-patterns
      ((function
        "statement_comment"
-       :before "function"
+       :before ("function" "type_definition")
        :line-comment "///")
       (module
        "module_comment"
