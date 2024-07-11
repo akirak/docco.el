@@ -1,4 +1,4 @@
-name: Build the package
+name: Check Emacs Lisp
 
 on:
   pull_request:
@@ -17,7 +17,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  byte-compile:
     uses: akirak/cosmetic-transient.el/.github/workflows/build-emacs-lisp.yml@workflow-call
+    with:
+      melpa-flake: github:akirak/melpa/akirak
+
+  melpazoid:
+    uses: akirak/cosmetic-transient.el/.github/workflows/lint-emacs-lisp.yml@workflow-call
     with:
       melpa-flake: github:akirak/melpa/akirak
