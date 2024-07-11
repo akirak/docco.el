@@ -32,8 +32,17 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+(require 'subr-x)
 (require 'pcase)
 (require 'map)
+
+(declare-function docco-ts--locate "docco-ts")
+(declare-function docco-ts--edit "docco-ts")
+
+(defgroup docco nil
+  "A framework for documentation comments."
+  :group 'editing)
 
 (defcustom docco-mode-alist
   `((gleam-ts-mode
