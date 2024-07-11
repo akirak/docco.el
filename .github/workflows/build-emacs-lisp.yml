@@ -12,10 +12,6 @@ on:
 
   workflow_dispatch:
 
-concurrency:
-  group: '${{ github.workflow }}-${{ github.ref }}'
-  cancel-in-progress: true
-
 jobs:
   build:
     uses: akirak/cosmetic-transient.el/.github/workflows/build-emacs-lisp.yml@workflow-call
