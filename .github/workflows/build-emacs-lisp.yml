@@ -1,0 +1,23 @@
+name: Build the package
+
+on:
+  pull_request:
+    paths-ignore:
+      - 'README.*'
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'README.*'
+
+  workflow_dispatch:
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    uses: akirak/cosmetic-transient.el/.github/workflows/build-emacs-lisp.yml@workflow-call
+    with:
+      melpa-flake: github:akirak/melpa/akirak
