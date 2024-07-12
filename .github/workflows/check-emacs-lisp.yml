@@ -14,7 +14,6 @@ on:
 
 jobs:
   byte-compile:
-    uses: akirak/cosmetic-transient.el/.github/workflows/build-emacs-lisp.yml@workflow-call
+    uses: emacs-twist/elisp-workflows/byte-compile.yml@master
     with:
-      melpa-flake: github:akirak/melpa/akirak
-
+      melpa: github:akirak/melpa/akirak
