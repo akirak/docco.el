@@ -72,17 +72,26 @@
           (guard treesit)
           (let `(,_ ,comment-node-type . ,plist) (assq type treesit-patterns)))
      (require 'docco-ts)
-     (cons 'treesit (cons comment-node-type plist)))))
+     (cons 'treesit (cons comment-node-type plist)))
+    ((and (map :patterns)
+          (guard patterns)
+          (let `(,_ . ,plist) (assq type patterns)))
+     (require 'docco-fallback)
+     (cons 'fallback plist))))
 
 (cl-defun docco--edit-comment (type)
   (pcase-exhaustive (docco--get-mode-settings type)
     (`(treesit ,comment-node-type . ,plist)
-     (apply #'docco-ts--edit comment-node-type plist))))
+     (apply #'docco-ts--edit comment-node-type plist))
+    (`(fallback . ,plist)
+     (apply #'docco-fallback--edit plist))))
 
 (cl-defun docco--has-comment-p (type)
   (pcase-exhaustive (docco--get-mode-settings type)
     (`(treesit ,comment-node-type . ,plist)
-     (car (apply #'docco-ts--locate comment-node-type plist)))))
+     (car (apply #'docco-ts--locate comment-node-type plist)))
+    (`(fallback . ,plist)
+     (car (apply #'docco-fallback--locate plist)))))
 
 (defun docco--statuses ()
   (pcase (docco--current-settings)
@@ -92,7 +101,14 @@
      (mapcar (pcase-lambda (`(,type ,comment-node-type . ,plist))
                (cons type
                      (car (apply #'docco-ts--locate comment-node-type plist))))
-             treesit-patterns))))
+             treesit-patterns))
+    ((and (map :patterns)
+          (guard patterns))
+     (require 'docco-fallback)
+     (mapcar (pcase-lambda (`(,type . ,plist))
+               (cons type
+                     (car (apply #'docco-fallback--locate plist))))
+             patterns))))
 
 ;;;; Commands
 
