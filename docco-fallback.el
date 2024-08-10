@@ -1,5 +1,8 @@
 ;;; docco-fallback.el --- Fallback backend for docco -*- lexical-binding: t -*-
 
+(require 'pcase)
+(require 'cl-lib)
+
 (cl-defun docco-fallback--edit (&key above below limit in-comment-p
                                      match-regexp default skeleton)
   (pcase-exhaustive (docco-fallback--locate :above above
@@ -25,7 +28,7 @@
      (re-search-forward (rx word-start) nil t))))
 
 (cl-defun docco-fallback--locate (&key above below limit in-comment-p
-                                       match-regexp default skeleton)
+                                       match-regexp &allow-other-keys)
   (cond
    ((and above below)
     (error "You can't specify both :above and :limit at the same time"))

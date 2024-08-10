@@ -39,6 +39,8 @@
 
 (declare-function docco-ts--locate "docco-ts")
 (declare-function docco-ts--edit "docco-ts")
+(declare-function docco-fallback--locate "docco-fallback")
+(declare-function docco-fallback--edit "docco-fallback")
 
 (defgroup docco nil
   "A framework for documentation comments."
