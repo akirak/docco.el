@@ -2,9 +2,11 @@
 Docco.el is a framework for editing documentation comments inside source code.
 It aims to be generic enough to support various programming languages and is desiged to be extensible.
 
-It relies on the built-in tree-sitter support of Emacs to define structural patterns easily.
+It relies on the built-in tree-sitter support of Emacs (i.e. ~treesit~) to define structural patterns easily.
+For major modes that are not based on ~treesit~ or have only a poorly-defined parser, regular expressions are used to define patterns.
 ** Supported Languages
 - ~gleam-ts-mode~ (Gleam)
+- ~elixir-ts-mode~ (Elixir)
 ** Usage
 - ~docco-edit-module-comment~ for editing a documentation comment of the current module
 - ~docco-edit-function-comment~ for editing a documentation comment of the function at point
