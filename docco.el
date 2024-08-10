@@ -45,7 +45,24 @@
   :group 'editing)
 
 (defcustom docco-mode-alist
-  `((gleam-ts-mode
+  `((elixir-ts-mode
+     :patterns
+     ((function
+       :above ,(rx symbol-start "def" (? "p") symbol-end)
+       :limit ,(rx symbol-start "end" symbol-end)
+       :match-regexp ,(rx "@doc \"\"\"")
+       :default (lambda () (open-line 1))
+       :in-comment-p
+       (lambda ()
+         (equal (treesit-node-type (treesit-node-at (point)))
+                "quoted_content"))
+       :skeleton (> "@doc \"\"\"" n _ n "\"\"\""))
+      (module
+       :below ,(rx bol "defmodule " (+? anything) " do")
+       :match-regexp ,(rx "@moduledoc \"\"\"")
+       :default newline-and-indent
+       :skeleton (> "@moduledoc \"\"\"" n _ n "\"\"\"" n n))))
+    (gleam-ts-mode
      :treesit t
      :treesit-patterns
      ((function
