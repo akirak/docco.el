@@ -61,13 +61,13 @@
 (defun docco-fallback--find-limit-backward (regexp &optional in-comment-p)
   (save-excursion
     (catch 'limit
-      (while (> (point) (point-min))
-        (when (re-search-backward regexp nil t)
-          (goto-char (match-end 0))
-          (unless (if in-comment-p
-                      (funcall in-comment-p)
-                    (ppss-comment-or-string-start (syntax-ppss)))
-            (throw 'limit (point))))))))
+      (while (and (> (point) (point-min))
+                  (re-search-backward regexp nil t))
+        (goto-char (match-end 0))
+        (unless (if in-comment-p
+                    (funcall in-comment-p)
+                  (ppss-comment-or-string-start (syntax-ppss)))
+          (throw 'limit (point)))))))
 
 (provide 'docco-fallback)
 ;;; docco-fallback.el ends here
