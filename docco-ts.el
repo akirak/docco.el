@@ -32,7 +32,8 @@
 
 (require 'treesit)
 
-(cl-defun docco-ts--edit (comment-node-type &key before line-comment)
+(cl-defun docco-ts--edit (comment-node-type &key before line-comment
+                                            &allow-other-keys)
   (pcase (docco-ts--locate comment-node-type :before before)
     (`nil
      (user-error "not effective from this location"))

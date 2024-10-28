@@ -4,7 +4,8 @@
 (require 'cl-lib)
 
 (cl-defun docco-fallback--edit (&key above below limit in-comment-p
-                                     match-regexp default skeleton)
+                                     match-regexp default skeleton
+                                     &allow-other-keys)
   (pcase-exhaustive (docco-fallback--locate :above above
                                             :below below
                                             :limit limit
