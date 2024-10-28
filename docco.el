@@ -101,7 +101,7 @@
 ;;;; Infrastructure
 
 (defun docco--current-settings ()
-  (when-let (mode (apply #'derived-mode-p (mapcar #'car docco-mode-alist)))
+  (when-let* ((mode (apply #'derived-mode-p (mapcar #'car docco-mode-alist))))
     (cdr (assq mode docco-mode-alist))))
 
 (defun docco-bindings ()
