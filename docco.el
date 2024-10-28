@@ -50,6 +50,7 @@
   `((elixir-ts-mode
      :patterns
      ((function
+       :key "f"
        :above ,(rx symbol-start "def" (? "p") symbol-end)
        :limit ,(rx symbol-start "end" symbol-end)
        :match-regexp ,(rx "@doc \"\"\"")
@@ -60,6 +61,7 @@
                 "quoted_content"))
        :skeleton (> "@doc \"\"\"" n _ n "\"\"\""))
       (module
+       :key "m"
        :below ,(rx bol "defmodule " (+? anything) " do")
        :match-regexp ,(rx "@moduledoc \"\"\"")
        :default newline-and-indent
@@ -69,10 +71,12 @@
      :treesit-patterns
      ((function
        "statement_comment"
+       :key "f"
        :before ("function" "type_definition")
        :line-comment "///")
       (module
        "module_comment"
+       :key "m"
        :before "source_file"
        :line-comment "////"))))
   ""
@@ -84,6 +88,20 @@
 (defun docco--current-settings ()
   (when-let (mode (apply #'derived-mode-p (mapcar #'car docco-mode-alist)))
     (cdr (assq mode docco-mode-alist))))
+
+(defun docco-bindings ()
+  "Return an alist of (KEY . SYMBOL) for the current mode."
+  (pcase-exhaustive (docco--current-settings)
+    ((and (map :treesit :treesit-patterns)
+          (guard treesit))
+     (mapcar (pcase-lambda (`(,type ,_node-type . ,plist))
+               (cons (plist-get plist :key) type))
+             treesit-patterns))
+    ((and (map :patterns)
+          (guard patterns))
+     (mapcar (pcase-lambda (`(,type . ,plist))
+               (cons (plist-get plist :key) type))
+             patterns))))
 
 (defun docco--get-mode-settings (type)
   (pcase-exhaustive (docco--current-settings)
