@@ -66,6 +66,21 @@
        :match-regexp ,(rx "@moduledoc \"\"\"")
        :default newline-and-indent
        :skeleton (> "@moduledoc \"\"\"" n _ n "\"\"\"" n n))))
+    (rust-ts-mode
+     :treesit t
+     :treesit-patterns
+     ((outer
+       "line_comment"
+       :key ?o
+       :line-comment "///"
+       :before ("type" "enum_item"
+                "function_item" "function_signature_item"
+                "trait_item" "impl_item"))
+      (inner
+       "line_comment"
+       :key ?i
+       :line-comment "//!"
+       :before ("source_file"))))
     (gleam-ts-mode
      :treesit t
      :treesit-patterns
