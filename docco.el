@@ -147,7 +147,29 @@
                      (car (apply #'docco-fallback--locate plist))))
              patterns))))
 
+;;;; Helper functions
+
+(defun docco--read-coment-type-by-char ()
+  (let* ((alist (docco-bindings))
+         (char (or (read-char-choice-with-read-key
+                    (format "Insert/edit a comment of type (%s): "
+                            (mapconcat (pcase-lambda (`(,key . ,type))
+                                         (format "%s: %s" (char-to-string key) type))
+                                       alist
+                                       ", "))
+                    (mapcar #'car alist))
+                   (error "Not matching a char"))))
+    (alist-get char alist)))
+
 ;;;; Commands
+
+;;;###autoload
+(defun docco-edit-comment-of-type (type)
+  "Insert a documentation comment of TYPE."
+  (interactive (list (docco--read-coment-type-by-char)))
+  (docco--edit-comment (cl-etypecase type
+                         (string (intern type))
+                         (symbol type))))
 
 ;;;###autoload
 (defun docco-edit-module-comment ()
