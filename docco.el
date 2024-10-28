@@ -50,7 +50,7 @@
   `((elixir-ts-mode
      :patterns
      ((function
-       :key "f"
+       :key ?f
        :above ,(rx symbol-start "def" (? "p") symbol-end)
        :limit ,(rx symbol-start "end" symbol-end)
        :match-regexp ,(rx "@doc \"\"\"")
@@ -61,7 +61,7 @@
                 "quoted_content"))
        :skeleton (> "@doc \"\"\"" n _ n "\"\"\""))
       (module
-       :key "m"
+       :key ?m
        :below ,(rx bol "defmodule " (+? anything) " do")
        :match-regexp ,(rx "@moduledoc \"\"\"")
        :default newline-and-indent
@@ -71,12 +71,12 @@
      :treesit-patterns
      ((function
        "statement_comment"
-       :key "f"
+       :key ?f
        :before ("function" "type_definition")
        :line-comment "///")
       (module
        "module_comment"
-       :key "m"
+       :key ?m
        :before "source_file"
        :line-comment "////"))))
   ""
