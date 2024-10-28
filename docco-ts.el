@@ -57,8 +57,8 @@
      ((equal (treesit-node-type node) comment-node-type)
       (cons t node))
      ((member (treesit-node-type node) (ensure-list before))
-      (if-let (comment-node (docco-ts--find-previous-sibling
-                             node comment-node-type (ensure-list before)))
+      (if-let* ((comment-node (docco-ts--find-previous-sibling
+                               node comment-node-type (ensure-list before))))
           (cons t comment-node)
         (cons nil node)))
      (t
