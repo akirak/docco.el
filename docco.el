@@ -176,6 +176,24 @@
                    (error "Not matching a char"))))
     (alist-get char alist)))
 
+(defun docco--beginning-of-line-comments (line-comment)
+  "Go to the first line in continuous line comments."
+  (let ((regexp (rx-to-string `(and (* blank) (group ,line-comment))))
+        (pos (point)))
+    (while (looking-at regexp)
+      (setq pos (match-beginning 1))
+      (beginning-of-line 0))
+    (goto-char pos)))
+
+(defun docco--beginning-of-line-comments (line-comment)
+  "Go to the first line in continuous line comments."
+  (let ((regexp (rx-to-string `(and (* blank) (group ,line-comment))))
+        (pos (point)))
+    (while (looking-at regexp)
+      (setq pos (match-beginning 1))
+      (beginning-of-line 0))
+    (goto-char pos)))
+
 ;;;; Commands
 
 ;;;###autoload

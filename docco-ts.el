@@ -37,8 +37,10 @@
   (pcase (docco-ts--locate comment-node-type :before before)
     (`nil
      (user-error "not effective from this location"))
-    (`(,_exists . ,node)
+    (`(,exists . ,node)
      (goto-char (treesit-node-start node))
+     (when exists
+       (docco--beginning-of-line-comments line-comment))
      ;; Enter a comment body
      (cond
       ((looking-at (concat (regexp-quote line-comment) (rx (* blank))))
