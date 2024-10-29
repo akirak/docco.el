@@ -26,7 +26,7 @@
        (skeleton-insert skeleton nil)))
     (`(,_exists . ,pos)
      (goto-char pos)
-     (re-search-forward (rx word-start) nil t))))
+     (re-search-forward (rx word-start) (line-end-position) t))))
 
 (cl-defun docco-fallback--locate (&key above below limit in-comment-p
                                        match-regexp &allow-other-keys)
