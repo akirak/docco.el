@@ -166,7 +166,11 @@
 
 (defun docco--read-coment-type-by-char ()
   (let* ((alist (docco-bindings))
-         (char (or (read-char-choice-with-read-key
+         (char (or (when (= 1 (length alist))
+                     ;; If there is only one candidate for the mode, skip the
+                     ;; completion and return the character.
+                     (caar alist))
+                   (read-char-choice-with-read-key
                     (format "Insert/edit a comment of type (%s): "
                             (mapconcat (pcase-lambda (`(,key . ,type))
                                          (format "%s: %s" (char-to-string key) type))
