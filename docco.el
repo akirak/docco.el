@@ -93,7 +93,16 @@
        "module_comment"
        :key ?m
        :before "source_file"
-       :line-comment "////"))))
+       :line-comment "////")))
+    (typescript-ts-mode
+     :treesit t
+     :treesit-patterns
+     ((comment
+       "comment"
+       :key ?c
+       :before ("class_declaration" "export_statement" "type_alias_declaration")
+       :comment-start-regexp ,(rx "/**" (? (* blank) "\n" (* blank) "*") (+ blank))
+       :skeleton (> "/**" n " * " _ n " */")))))
   ""
   :type '(alist-get :key-type (symbol :tag "Major mode")
                     :value-type plist))
