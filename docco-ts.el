@@ -85,7 +85,13 @@
   (let ((node (treesit-node-at (point))))
     (catch 'find-ts-node
       (while node
-        (when (member (treesit-node-type node) node-types)
+        (when (and (member (treesit-node-type node) node-types)
+                   ;; Require the node to start at bol. This is important for
+                   ;; languages like JavaScript/TypeScript which has the
+                   ;; optional export keyword.
+                   (save-excursion
+                     (goto-char (treesit-node-start node))
+                     (bolp)))
           (throw 'find-ts-node node))
         (setq node (treesit-node-parent node))))))
 
