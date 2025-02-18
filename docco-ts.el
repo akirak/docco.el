@@ -35,6 +35,8 @@
 (declare-function docco--beginning-of-line-comments "docco")
 
 (cl-defun docco-ts--edit (comment-node-type &key before line-comment
+                                            comment-start-regexp
+                                            skeleton
                                             &allow-other-keys)
   (pcase (docco-ts--locate comment-node-type :before before)
     (`nil
@@ -42,14 +44,25 @@
     (`(,exists . ,node)
      (goto-char (treesit-node-start node))
      (when exists
-       (docco--beginning-of-line-comments line-comment))
-     ;; Enter a comment body
+       ;; There can be multiple continuous lines of comments, so try to locate
+       ;; the first one.
+       (when line-comment
+         (docco--beginning-of-line-comments line-comment)))
+     ;; Enter the comment body
      (cond
-      ((looking-at (concat (regexp-quote line-comment) (rx (* blank))))
+      ((and comment-start-regexp
+            (looking-at comment-start-regexp))
+       (goto-char (match-end 0)))
+      ((and line-comment
+            (looking-at (concat (regexp-quote line-comment) (rx (* blank)))))
        (goto-char (match-end 0)))
       (t
        (open-line 1)
-       (insert line-comment " "))))))
+       (cond
+        (skeleton
+         (skeleton-insert skeleton nil))
+        (line-comment
+         (insert line-comment " "))))))))
 
 (cl-defun docco-ts--locate (comment-node-type &key before &allow-other-keys)
   "Returns (EXISTING . NODE) to indicate what to do next."
