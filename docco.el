@@ -100,7 +100,8 @@
      ((comment
        "comment"
        :key ?c
-       :before ("class_declaration" "export_statement" "type_alias_declaration")
+       :before ("class_declaration" "export_statement" "type_alias_declaration"
+                "function_declaration")
        :comment-start-regexp ,(rx "/**" (? (* blank) "\n" (* blank) "*") (+ blank))
        :skeleton (> "/**" n " * " _ n -2 "*/")))))
   ""
