@@ -8,6 +8,7 @@ For major modes that are not based on ~treesit~ or have only a poorly-defined pa
 - ~rust-ts-mode~ (Rust)
 - ~gleam-ts-mode~ (Gleam)
 - ~elixir-ts-mode~ (Elixir)
+- ~typescript-ts-mode~ (TypeScript)
 ** Usage
 - ~docco-edit-module-comment~ for editing a documentation comment of the current module
 - ~docco-edit-function-comment~ for editing a documentation comment of the function at point
