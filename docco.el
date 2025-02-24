@@ -103,7 +103,7 @@
        :before ("class_declaration" "export_statement" "type_alias_declaration"
                 "function_declaration")
        :comment-start-regexp ,(rx "/**" (? (* blank) "\n" (* blank) "*") (+ blank))
-       :skeleton (> "/**" n " * " _ n -2 "*/")))))
+       :skeleton (> "/**" n " * " _ n " */")))))
   ""
   :type '(alist-get :key-type (symbol :tag "Major mode")
                     :value-type plist))
