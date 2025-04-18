@@ -38,35 +38,41 @@
 
 (cl-defun docco-ts--edit (comment-node-type &key before line-comment
                                             comment-start-regexp
-                                            skeleton
+                                            skeleton anywhere
                                             &allow-other-keys)
-  (pcase (docco-ts--locate comment-node-type
-                           :before before
-                           :comment-start-regexp comment-start-regexp)
-    (`nil
-     (user-error "not effective from this location"))
-    (`(,exists . ,node)
-     (goto-char (treesit-node-start node))
-     (when exists
-       ;; There can be multiple continuous lines of comments, so try to locate
-       ;; the first one.
-       (when line-comment
-         (docco--beginning-of-line-comments line-comment)))
-     ;; Enter the comment body
-     (cond
-      ((and comment-start-regexp
-            (looking-at comment-start-regexp))
-       (goto-char (match-end 0)))
-      ((and line-comment
-            (looking-at (concat (regexp-quote line-comment) (rx (* blank)))))
-       (goto-char (match-end 0)))
-      (t
-       (docco--open-line-and-indent)
+  (if anywhere
+      (cond
+       (skeleton
+        (skeleton-insert skeleton nil))
+       (line-comment
+        (insert line-comment " ")))
+    (pcase (docco-ts--locate comment-node-type
+                             :before before
+                             :comment-start-regexp comment-start-regexp)
+      (`nil
+       (user-error "not effective from this location"))
+      (`(,exists . ,node)
+       (goto-char (treesit-node-start node))
+       (when exists
+         ;; There can be multiple continuous lines of comments, so try to locate
+         ;; the first one.
+         (when line-comment
+           (docco--beginning-of-line-comments line-comment)))
+       ;; Enter the comment body
        (cond
-        (skeleton
-         (skeleton-insert skeleton nil))
-        (line-comment
-         (insert line-comment " "))))))))
+        ((and comment-start-regexp
+              (looking-at comment-start-regexp))
+         (goto-char (match-end 0)))
+        ((and line-comment
+              (looking-at (concat (regexp-quote line-comment) (rx (* blank)))))
+         (goto-char (match-end 0)))
+        (t
+         (docco--open-line-and-indent)
+         (cond
+          (skeleton
+           (skeleton-insert skeleton nil))
+          (line-comment
+           (insert line-comment " ")))))))))
 
 (cl-defun docco-ts--locate (comment-node-type &key before comment-start-regexp
                                               &allow-other-keys)
