@@ -94,7 +94,7 @@
        :key ?m
        :before "source_file"
        :line-comment "////")))
-    (typescript-ts-mode
+    ((typescript-ts-mode tsx-ts-mode)
      :treesit t
      :treesit-patterns
      ((comment
