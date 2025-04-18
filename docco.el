@@ -114,8 +114,12 @@
 ;;;; Infrastructure
 
 (defun docco--current-settings ()
-  (when-let* ((mode (apply #'derived-mode-p (mapcar #'car docco-mode-alist))))
-    (cdr (assq mode docco-mode-alist))))
+  (when-let* ((mode (apply #'derived-mode-p
+                           (flatten-list (mapcar #'car docco-mode-alist)))))
+    (seq-some `(lambda (cell)
+                 (when (memq ',mode (ensure-list (car cell)))
+                   (cdr cell)))
+              docco-mode-alist)))
 
 (defun docco-bindings ()
   "Return an alist of (KEY . SYMBOL) for the current mode."
