@@ -212,6 +212,11 @@
       (beginning-of-line 0))
     (goto-char pos)))
 
+(defun docco--bol-or-indent-p ()
+  "Return non-nil if the point is at bol or on an indent."
+  (or (bolp)
+      (looking-back (rx bol (+ blank)) (line-beginning-position))))
+
 ;;;; Commands
 
 ;;;###autoload

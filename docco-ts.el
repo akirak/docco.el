@@ -33,6 +33,7 @@
 (require 'treesit)
 
 (declare-function docco--beginning-of-line-comments "docco")
+(declare-function docco--bol-or-indent-p "docco")
 
 (cl-defun docco-ts--edit (comment-node-type &key before line-comment
                                             comment-start-regexp
@@ -91,7 +92,7 @@
                    ;; optional export keyword.
                    (save-excursion
                      (goto-char (treesit-node-start node))
-                     (bolp)))
+                     (docco--bol-or-indent-p)))
           (throw 'find-ts-node node))
         (setq node (treesit-node-parent node))))))
 
