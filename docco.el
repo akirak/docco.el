@@ -94,6 +94,51 @@
        :key ?m
        :before "source_file"
        :line-comment "////")))
+    ;; https://ocaml.org/manual/5.2/ocamldoc.html#s:ocamldoc-comments
+    ((neocaml-mode neocamli-mode ocaml-ts-mode)
+     :treesit t
+     :treesit-patterns
+     ((module
+       "comment"
+       :key ?m
+       :before ("module_definition")
+       :comment-start-regexp "(\\*\\* "
+       :skeleton (> "(** " _ " *)"))
+      (type
+       "comment"
+       :key ?t
+       :before ("type_definition")
+       :comment-start-regexp "(\\*\\* "
+       :skeleton (> "(** " _ " *)"))
+      (class
+       "comment"
+       :key ?c
+       :before ("class_definition")
+       :comment-start-regexp "(\\*\\* "
+       :skeleton (> "(** " _ " *)"))
+      (let_
+       "comment"
+       :key ?f
+       :before ("value_definition")
+       :comment-start-regexp "(\\*\\* "
+       :skeleton (> "(** " _ " *)"))
+      (val
+       "comment"
+       :key ?v
+       :before ("value_specification")
+       :comment-start-regexp "(\\*\\* "
+       :skeleton (> "(** " _ " *)"))
+      (exception
+       "comment"
+       :key ?e
+       :before ("exception_definition")
+       :comment-start-regexp "(\\*\\* "
+       :skeleton (> "(** " _ " *)"))
+      (stop
+       "comment"
+       :key ?s
+       :anywhere t
+       :skeleton (> _ "(**/**)"))))
     ((typescript-ts-mode tsx-ts-mode)
      :treesit t
      :treesit-patterns
