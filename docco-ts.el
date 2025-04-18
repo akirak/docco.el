@@ -40,7 +40,9 @@
                                             comment-start-regexp
                                             skeleton
                                             &allow-other-keys)
-  (pcase (docco-ts--locate comment-node-type :before before)
+  (pcase (docco-ts--locate comment-node-type
+                           :before before
+                           :comment-start-regexp comment-start-regexp)
     (`nil
      (user-error "not effective from this location"))
     (`(,exists . ,node)
@@ -66,7 +68,8 @@
         (line-comment
          (insert line-comment " "))))))))
 
-(cl-defun docco-ts--locate (comment-node-type &key before &allow-other-keys)
+(cl-defun docco-ts--locate (comment-node-type &key before comment-start-regexp
+                                              &allow-other-keys)
   "Returns (EXISTING . NODE) to indicate what to do next."
   (let ((node (docco-ts--find-ancestor-or-self (cons comment-node-type
                                                      (ensure-list before)))))
@@ -77,14 +80,21 @@
       (cons t node))
      ((member (treesit-node-type node) (ensure-list before))
       (if-let* ((comment-node (docco-ts--find-previous-sibling
-                               node comment-node-type (ensure-list before))))
+                               node
+                               :comment-start-regexp comment-start-regexp
+                               :target-type comment-node-type
+                               :not-types (ensure-list before))))
           (cons t comment-node)
         (cons nil node)))
      (t
       nil))))
 
 (defun docco-ts--find-ancestor-or-self (node-types)
-  (let ((node (treesit-node-at (point))))
+  (let ((node (treesit-node-at (if (docco--bol-or-indent-p)
+                                   (if (looking-at (rx (* blank)))
+                                       (match-end 0)
+                                     (point))
+                                 (point)))))
     (catch 'find-ts-node
       (while node
         (when (and (member (treesit-node-type node) node-types)
@@ -97,12 +107,18 @@
           (throw 'find-ts-node node))
         (setq node (treesit-node-parent node))))))
 
-(defun docco-ts--find-previous-sibling (start goal-type not-types)
+(cl-defun docco-ts--find-previous-sibling (start &key target-type not-types
+                                                 comment-start-regexp)
   (let ((node start))
     (catch 'find-prev-sibling
       (while node
         (setq node (treesit-node-prev-sibling node))
-        (when (equal (treesit-node-type node) goal-type)
+        (when (and (or (not target-type)
+                       (equal (treesit-node-type node) target-type))
+                   (or (not comment-start-regexp)
+                       (save-excursion
+                         (goto-char (treesit-node-start node))
+                         (looking-at comment-start-regexp))))
           (throw 'find-prev-sibling node))
         (when (member (treesit-node-type node) not-types)
           (throw 'find-prev-sibling nil))))))
