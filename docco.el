@@ -217,6 +217,12 @@
   (or (bolp)
       (looking-back (rx bol (+ blank)) (line-beginning-position))))
 
+(defun docco--open-line-and-indent ()
+  (unless (bolp)
+    (save-excursion
+      (insert (buffer-substring (line-beginning-position) (point))))
+    (open-line 1)))
+
 ;;;; Commands
 
 ;;;###autoload

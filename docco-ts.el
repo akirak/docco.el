@@ -34,6 +34,7 @@
 
 (declare-function docco--beginning-of-line-comments "docco")
 (declare-function docco--bol-or-indent-p "docco")
+(declare-function docco--open-line-and-indent "docco")
 
 (cl-defun docco-ts--edit (comment-node-type &key before line-comment
                                             comment-start-regexp
@@ -58,7 +59,7 @@
             (looking-at (concat (regexp-quote line-comment) (rx (* blank)))))
        (goto-char (match-end 0)))
       (t
-       (open-line 1)
+       (docco--open-line-and-indent)
        (cond
         (skeleton
          (skeleton-insert skeleton nil))
