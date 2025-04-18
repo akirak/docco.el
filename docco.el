@@ -124,6 +124,8 @@
 (defun docco-bindings ()
   "Return an alist of (KEY . SYMBOL) for the current mode."
   (pcase-exhaustive (docco--current-settings)
+    (`nil
+     (user-error "This major mode is not supported by docco"))
     ((and (map :treesit :treesit-patterns)
           (guard treesit))
      (mapcar (pcase-lambda (`(,type ,_node-type . ,plist))
@@ -137,6 +139,8 @@
 
 (defun docco--get-mode-settings (type)
   (pcase-exhaustive (docco--current-settings)
+    (`nil
+     (user-error "This major mode is not supported by docco"))
     ((and (map :treesit :treesit-patterns)
           (guard treesit)
           (let `(,_ ,comment-node-type . ,plist) (assq type treesit-patterns)))
@@ -163,7 +167,9 @@
      (car (apply #'docco-fallback--locate plist)))))
 
 (defun docco--statuses ()
-  (pcase (docco--current-settings)
+  (pcase-exhaustive (docco--current-settings)
+    ;; Just return nil
+    (`nil)
     ((and (map :treesit :treesit-patterns)
           (guard treesit))
      (require 'docco-ts)
