@@ -198,6 +198,7 @@
      (cons 'fallback plist))))
 
 (cl-defun docco--edit-comment (type)
+  (push-mark)
   (pcase-exhaustive (docco--get-mode-settings type)
     (`(treesit ,comment-node-type . ,plist)
      (apply #'docco-ts--edit comment-node-type plist))
