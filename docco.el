@@ -101,7 +101,7 @@
      ((module
        "comment"
        :key ?m
-       :before ("module_definition")
+       :before ("module_definition" "module_type_definition")
        :comment-start-regexp "(\\*\\* "
        :skeleton (> "(** " _ " *)"))
       (type
