@@ -37,6 +37,7 @@
 (declare-function docco--open-line-and-indent "docco")
 
 (cl-defun docco-ts--edit (comment-node-type &key before line-comment
+                                            only-immediately-before
                                             comment-start-regexp
                                             skeleton anywhere
                                             &allow-other-keys)
@@ -47,6 +48,7 @@
        (line-comment
         (insert line-comment " ")))
     (pcase (docco-ts--locate comment-node-type
+                             :only-immediately-before only-immediately-before
                              :before before
                              :comment-start-regexp comment-start-regexp)
       (`nil
@@ -75,6 +77,7 @@
            (insert line-comment " ")))))))))
 
 (cl-defun docco-ts--locate (comment-node-type &key before comment-start-regexp
+                                              only-immediately-before
                                               &allow-other-keys)
   "Returns (EXISTING . NODE) to indicate what to do next."
   (let ((node (docco-ts--find-ancestor-or-self (cons comment-node-type
@@ -87,6 +90,7 @@
      ((member (treesit-node-type node) (ensure-list before))
       (if-let* ((comment-node (docco-ts--find-previous-sibling
                                node
+                               :only-immediately-before only-immediately-before
                                :comment-start-regexp comment-start-regexp
                                :target-type comment-node-type
                                :not-types (ensure-list before))))
@@ -114,6 +118,7 @@
         (setq node (treesit-node-parent node))))))
 
 (cl-defun docco-ts--find-previous-sibling (start &key target-type not-types
+                                                 only-immediately-before
                                                  comment-start-regexp)
   (let ((node start))
     (catch 'find-prev-sibling
@@ -126,7 +131,8 @@
                          (goto-char (treesit-node-start node))
                          (looking-at comment-start-regexp))))
           (throw 'find-prev-sibling node))
-        (when (member (treesit-node-type node) not-types)
+        (when (or only-immediately-before
+                  (member (treesit-node-type node) not-types))
           (throw 'find-prev-sibling nil))))))
 
 (provide 'docco-ts)

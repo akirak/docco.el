@@ -101,36 +101,42 @@
      ((module
        "comment"
        :key ?m
+       :only-immediately-before t
        :before ("module_definition" "module_type_definition")
        :comment-start-regexp "(\\*\\* "
        :skeleton (> "(** " _ " *)"))
       (type
        "comment"
        :key ?t
+       :only-immediately-before t
        :before ("type_definition")
        :comment-start-regexp "(\\*\\* "
        :skeleton (> "(** " _ " *)"))
       (class
        "comment"
        :key ?c
+       :only-immediately-before t
        :before ("class_definition")
        :comment-start-regexp "(\\*\\* "
        :skeleton (> "(** " _ " *)"))
       (let_
        "comment"
        :key ?f
+       :only-immediately-before t
        :before ("value_definition")
        :comment-start-regexp "(\\*\\* "
        :skeleton (> "(** " _ " *)"))
       (val
        "comment"
        :key ?v
+       :only-immediately-before t
        :before ("value_specification")
        :comment-start-regexp "(\\*\\* "
        :skeleton (> "(** " _ " *)"))
       (exception
        "comment"
        :key ?e
+       :only-immediately-before t
        :before ("exception_definition")
        :comment-start-regexp "(\\*\\* "
        :skeleton (> "(** " _ " *)"))
