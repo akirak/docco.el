@@ -155,6 +155,7 @@
                 "export_statement"
                 "type_alias_declaration"
                 "lexical_declaration"
+                "method_definition"
                 "function_declaration")
        :comment-start-regexp ,(rx "/**" (? (* blank) "\n" (* blank) "*") (+ blank))
        :skeleton (> "/**" n " * " _ n " */")))))
