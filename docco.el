@@ -249,6 +249,30 @@
                      (car (apply #'docco-fallback--locate plist))))
              patterns))))
 
+(defun docco--convert-region (type begin end)
+  (let ((marker (make-marker)))
+    (atomic-change-group
+      (save-excursion
+        (set-marker marker end)
+        (goto-char begin)
+        (uncomment-region begin end)
+        (let ((new-end (marker-position marker)))
+          (pcase-exhaustive (docco--get-mode-settings type)
+            (`(treesit ,comment-node-type . ,plist)
+             (apply #'docco--wrap-region begin new-end plist))
+            (`(fallback . ,plist)
+             (apply #'docco--wrap-region begin new-end plist))))))))
+
+(cl-defun docco--wrap-region (begin end &key skeleton line-comment
+                                    &allow-other-keys)
+  (cond
+   (skeleton
+    (error "Not implemented"))
+   (line-comment
+    (let ((str (buffer-substring begin end)))
+      (delete-region begin end)
+      (insert line-comment " " str)))))
+
 ;;;; Helper functions
 
 (defun docco--read-coment-type-by-char ()
@@ -293,9 +317,11 @@
 (defun docco-edit-comment-of-type (type)
   "Insert a documentation comment of TYPE."
   (interactive (list (docco--read-coment-type-by-char)))
-  (docco--edit-comment (cl-etypecase type
-                         (string (intern type))
-                         (symbol type))))
+  (if (use-region-p)
+      (docco--convert-region type (region-beginning) (region-end))
+    (docco--edit-comment (cl-etypecase type
+                           (string (intern type))
+                           (symbol type)))))
 
 ;;;###autoload
 (defun docco-edit-module-comment ()
