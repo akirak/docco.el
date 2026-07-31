@@ -68,14 +68,22 @@
        :skeleton (> "@moduledoc \"\"\"" n _ n "\"\"\"" n n))))
     (rust-ts-mode
      :treesit t
+     :treesit-non-targets ("attribute_item")
      :treesit-patterns
-     ((outer
+     ((toplevel
        "line_comment"
-       :key ?o
+       :key ?t
        :line-comment "///"
+       :ppss-depth 0
        :before ("type" "enum_item"
+                "struct_item"
                 "function_item" "function_signature_item"
                 "trait_item" "impl_item"))
+      (function
+       "line_comment"
+       :key ?f
+       :line-comment "///"
+       :before ("function_item" "function_signature_item"))
       (inner
        "line_comment"
        :key ?i
@@ -234,13 +242,15 @@
   (pcase-exhaustive (docco--current-settings)
     ;; Just return nil
     (`nil)
-    ((and (map :treesit :treesit-patterns)
+    ((and (map :treesit :treesit-patterns :treesit-non-targets)
           (guard treesit))
      (require 'docco-ts)
      (mapcar (pcase-lambda (`(,type ,comment-node-type . ,plist))
                (cons type
                      (car (apply #'docco-ts--locate comment-node-type plist))))
-             treesit-patterns))
+             (append (when treesit-non-targets
+                       (list :non-targets treesit-non-targets))
+                     treesit-patterns)))
     ((and (map :patterns)
           (guard patterns))
      (require 'docco-fallback)

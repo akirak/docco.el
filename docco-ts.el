@@ -40,6 +40,7 @@
                                             only-immediately-before
                                             comment-start-regexp
                                             skeleton anywhere
+                                            ppss-depth non-targets
                                             &allow-other-keys)
   (if anywhere
       (cond
@@ -49,6 +50,8 @@
         (insert line-comment " ")))
     (pcase (docco-ts--locate comment-node-type
                              :only-immediately-before only-immediately-before
+                             :ppss-depth ppss-depth
+                             :non-targets non-targets
                              :before before
                              :comment-start-regexp comment-start-regexp)
       (`nil
@@ -78,10 +81,12 @@
 
 (cl-defun docco-ts--locate (comment-node-type &key before comment-start-regexp
                                               only-immediately-before
+                                              non-targets ppss-depth
                                               &allow-other-keys)
   "Returns (EXISTING . NODE) to indicate what to do next."
   (let ((node (docco-ts--find-ancestor-or-self (cons comment-node-type
-                                                     (ensure-list before)))))
+                                                     (ensure-list before))
+                                               :ppss-depth ppss-depth)))
     ;; Find a location that begins a comment or is suitable for inserting a
     ;; comment
     (cond
@@ -93,13 +98,14 @@
                                :only-immediately-before only-immediately-before
                                :comment-start-regexp comment-start-regexp
                                :target-type comment-node-type
-                               :not-types (ensure-list before))))
+                               :not-types (append non-targets
+                                                  (ensure-list before)))))
           (cons t comment-node)
         (cons nil node)))
      (t
       nil))))
 
-(defun docco-ts--find-ancestor-or-self (node-types)
+(cl-defun docco-ts--find-ancestor-or-self (node-types &key ppss-depth)
   (let ((node (treesit-node-at (if (docco--bol-or-indent-p)
                                    (if (looking-at (rx (* blank)))
                                        (match-end 0)
@@ -113,12 +119,19 @@
                    ;; optional export keyword.
                    (save-excursion
                      (goto-char (treesit-node-start node))
-                     (docco--bol-or-indent-p)))
+                     (and (docco--bol-or-indent-p)
+                          (or (not ppss-depth)
+                              (let ((current-depth (syntax-ppss-depth (syntax-ppss))))
+                                (if (< current-depth ppss-depth)
+                                    (error "The current syntax depth is lower than %d"
+                                           ppss-depth)
+                                  (= current-depth ppss-depth)))))))
           (throw 'find-ts-node node))
         (setq node (treesit-node-parent node))))))
 
 (cl-defun docco-ts--find-previous-sibling (start &key target-type not-types
                                                  only-immediately-before
+                                                 ppss-depth
                                                  comment-start-regexp)
   (let ((node start))
     (catch 'find-prev-sibling
