@@ -294,8 +294,8 @@
 (defun docco--open-line-and-indent ()
   (unless (bolp)
     (save-excursion
-      (insert (buffer-substring (line-beginning-position) (point))))
-    (open-line 1)))
+      (insert (buffer-substring (line-beginning-position) (point)))))
+  (open-line 1))
 
 ;;;; Commands
 
