@@ -131,7 +131,6 @@
 
 (cl-defun docco-ts--find-previous-sibling (start &key target-type not-types
                                                  only-immediately-before
-                                                 ppss-depth
                                                  comment-start-regexp)
   (let ((node start))
     (catch 'find-prev-sibling
