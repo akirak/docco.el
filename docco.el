@@ -103,7 +103,7 @@
        :before "source_file"
        :line-comment "////")))
     ;; https://ocaml.org/manual/5.2/ocamldoc.html#s:ocamldoc-comments
-    ((neocaml-mode neocamli-mode ocaml-ts-mode)
+    ((neocaml-mode neocaml-interface-mode ocaml-ts-mode)
      :treesit t
      :treesit-patterns
      ((module
